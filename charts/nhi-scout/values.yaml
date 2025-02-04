@@ -67,17 +67,29 @@ podAnnotations: {}
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 podLabels: {}
 
-# Example:
-# capabilities:
-#   drop:
-#   - ALL
-# readOnlyRootFilesystem: true
-# runAsNonRoot: true
-# runAsUser: 1000
 securityContext:
-  runAsUser: 65532
-  runAsGroup: 65532
-  fsGroup: 65532
+  # -- Enable security Context in deployments.
+  # Set to false when deploying on OpenShift
+  enabled: true
+  # @ignored
+  runAsNonRoot: true
+  # @ignored
+  runAsUser: null
+  # @ignored
+  runAsGroup: null
+  # @ignored
+  fsGroup: null
+
+# -- Specify Container Security Context in deployments.
+# Note: Enabled if `securityContext.enabled` is true.
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  privileged: false
+  seccompProfile:
+    type: RuntimeDefault
+  capabilities:
+    drop:
+    - ALL
 
 # We usually recommend not to specify default resources and to leave this as a conscious
 # choice for the user. This also increases chances charts run on environments with little

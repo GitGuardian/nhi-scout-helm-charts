@@ -125,4 +125,5 @@ tests:
       value:
         runAsUser: 65532
         runAsGroup: 65532
+        runAsNonRoot: true
         fsGroup: 65532

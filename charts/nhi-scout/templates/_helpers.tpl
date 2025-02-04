@@ -60,3 +60,26 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Security context
+*/}}
+{{- define "nhi-scout.securityContext" }}
+{{- if .Values.securityContext.enabled }}
+{{/* uid for chainguard images */}}{{- $uid := 65532 }}
+securityContext:
+  fsGroup: {{ .Values.securityContext.fsGroup | default $uid }}
+  runAsUser: {{ .Values.securityContext.runAsUser | default $uid }}
+  runAsGroup: {{  .Values.securityContext.runAsGroup | default $uid }}
+  runAsNonRoot: {{ .Values.securityContext.runAsNonRoot }}
+{{- end }}
+{{- end }}
+
+{{/*
+Container security context for backend deployments
+*/}}
+{{- define "nhi-scout.containerSecurityContext" }}
+{{- if .Values.securityContext.enabled }}
+securityContext: {{- toYaml .Values.containerSecurityContext | nindent 2 }}
+{{- end }}
+{{- end }}

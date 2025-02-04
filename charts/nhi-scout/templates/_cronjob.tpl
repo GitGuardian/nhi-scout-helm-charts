@@ -20,11 +20,12 @@ spec:
             {{ toYaml . | nindent 12 }}
             {{- end }}
         spec:
-          securityContext: {{ toJson .Values.securityContext }}
+          {{- include "nhi-scout.securityContext" $ | indent 10 }}
           containers:
             - name: {{ .Chart.Name }}
               image: "{{ .Values.image.repository }}:{{ .Values.inventory.version }}"
               imagePullPolicy: {{ .Values.image.pullPolicy }}
+              {{- include "nhi-scout.containerSecurityContext" $ | indent 14 }}
               args:
                 - {{ .command }}
                 {{- if .Values.inventory.log_level }}
