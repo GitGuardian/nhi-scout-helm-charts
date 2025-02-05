@@ -47,6 +47,7 @@ Selector labels
 */}}
 {{- define "nhi-scout.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "nhi-scout.name" . }}
+app.kubernetes.io/component: {{ include "nhi-scout.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 

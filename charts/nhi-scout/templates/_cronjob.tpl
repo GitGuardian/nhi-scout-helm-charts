@@ -9,6 +9,8 @@ spec:
   schedule: {{ toJson .schedule  }}
   jobTemplate:
     spec:
+      ttlSecondsAfterFinished: {{ .ttlSecondsAfterFinished | int }}
+      backoffLimit: {{ .backOffLimit | int }}
       template:
         metadata:
           {{- with .Values.podAnnotations }}

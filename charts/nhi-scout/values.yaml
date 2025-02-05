@@ -13,13 +13,19 @@ inventory:
   jobs:
     ping:
       schedule: "* * * * *"
+      backOffLimit: 2
+      ttlSecondsAfterFinished: 2592000 #30 days
     fetch:
       schedule: "*/15 * * * *"
       enabled: false
       send: false
+      backOffLimit: 2
+      ttlSecondsAfterFinished: 2592000 #30 days
     sync:
       schedule: "* * * * *"
       enabled: false
+      backOffLimit: 2
+      ttlSecondsAfterFinished: 2592000 #30 days
 
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
