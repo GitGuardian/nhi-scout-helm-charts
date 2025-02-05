@@ -8,8 +8,8 @@ metadata:
     {{- include "nhi-scout.labels" . | nindent 4 }}
 subjects:
   - kind: ServiceAccount
-    name: {{ include "nhi-scout.fullname" . }}
-    namespace: {{ .Values.namespace }}
+    name: {{ include "nhi-scout.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
   name: {{ include "nhi-scout.fullname" . }}

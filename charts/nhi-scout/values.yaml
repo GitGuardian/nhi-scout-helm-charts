@@ -113,5 +113,3 @@ tolerations: []
 affinity: {}
 
 restartPolicy: Never
-
-namespace: default

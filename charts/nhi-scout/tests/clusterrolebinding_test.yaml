@@ -5,10 +5,11 @@ values:
 - ../test_values.yaml
 templates:
 - clusterrolebinding.yaml
+release:
+  namespace: nhi-scout
 set:
   clusterRole.create: true
   serviceAccount.create: true
-  namespace: nhi-scout
 tests:
 - it: should have the correct kind for ClusterRoleBinding
   asserts:
