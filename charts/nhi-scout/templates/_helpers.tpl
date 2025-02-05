@@ -83,3 +83,86 @@ Container security context for backend deployments
 securityContext: {{- toYaml .Values.containerSecurityContext | nindent 2 }}
 {{- end }}
 {{- end }}
+
+{{/*
+Create the image path
+{{ include "nhi-scout.image" }}
+Image schema:
+  image:
+    registry: ""
+    name: ""
+    tag: ""
+By default , concatenate values like this "<registry>/<name>:<tag>", but if global.imageRegistry is defined,
+it will take precedence over registry defined in image.
+*/}}
+{{- define "nhi-scout.image" -}}
+{{- $registry := .Values.image.registry -}}
+{{- $name := .Values.image.name -}}
+{{- $tag := .Values.image.tag | toString -}}
+{{- with .Values.global -}}
+  {{- if .imageRegistry -}}
+    {{- $registry = .imageRegistry -}}
+  {{- end -}}
+{{- end -}}
+{{- if $registry -}}
+  {{- $name = printf "%s/%s" $registry $name -}}
+{{- end -}}
+{{- if hasPrefix "sha256:" $tag -}}
+  {{- printf "%s@%s" $name $tag -}}
+{{- else -}}
+  {{- printf "%s:%s" $name $tag -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the proper Docker Image Registry Secret Names evaluating values as templates, and following these rules:
+- Include all existing secret names defined in global.imagePullSecrets:
+  global:
+    imagePullSecrets:
+      - name: pull-secret
+      - name: another-pull-secret
+- Include all existing secret names defined in each images parameters in .pullSecrets:
+  image:
+    pullSecrets:
+      - name: image-pull-secret
+Follow this guide in order to create docker secrets https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+Usage: {{ include "common.imagePullSecrets" ( dict "images" (list .Values.path.to.the.image1 .Values.path.to.the.image2) "context" $) }}
+*/}}
+{{- define "nhi-scout.common.imagePullSecrets" -}}
+  {{- $pullSecrets := list }}
+  {{- $context := .context }}
+
+  {{- if $context.Values.global }}
+    {{- range $context.Values.global.imagePullSecrets -}}
+      {{- if kindIs "map" . -}}
+        {{- $pullSecrets = append $pullSecrets (tpl .name $context) -}}
+      {{- else -}}
+        {{- $pullSecrets = append $pullSecrets (tpl . $context) -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- range .images -}}
+    {{- range .pullSecrets -}}
+      {{- if kindIs "map" . -}}
+        {{- $pullSecrets = append $pullSecrets (tpl .name $context) -}}
+      {{- else -}}
+        {{- $pullSecrets = append $pullSecrets (tpl . $context) -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- if (not (empty $pullSecrets)) }}
+imagePullSecrets:
+    {{- range $pullSecrets | uniq }}
+  - name: {{ . }}
+    {{- end }}
+  {{- end }}
+{{- end -}}
+
+{{/*
+imagePullSecrets
+*/}}
+{{- define "nhi-scout.imagePullSecrets" -}}
+{{ include "nhi-scout.common.imagePullSecrets" ( dict "images" (list $.Values.image) "context" $) }}
+{{- end -}}

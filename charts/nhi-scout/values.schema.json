@@ -21,10 +21,6 @@
         },
         "log_level": {
           "$ref": "#/definitions/inventory-log-level.schema.json"
-        },
-        "version": {
-          "type": "string",
-          "minLength": 0
         }
       },
       "additionalProperties": false

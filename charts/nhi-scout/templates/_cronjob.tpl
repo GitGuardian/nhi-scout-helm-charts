@@ -23,8 +23,8 @@ spec:
           {{- include "nhi-scout.securityContext" $ | indent 10 }}
           containers:
             - name: {{ .Chart.Name }}
-              image: "{{ .Values.image.repository }}:{{ .Values.inventory.version }}"
-              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              image: {{ include "nhi-scout.image" . }}
+              imagePullPolicy: {{ .Values.imagePullPolicy }}
               {{- include "nhi-scout.containerSecurityContext" $ | indent 14 }}
               args:
                 - {{ .command }}
@@ -45,9 +45,7 @@ spec:
                 {{- range .Values.volumeMounts }}
                 - {{ toJson . }}
                 {{- end }}
-          {{- with .Values.imagePullSecrets }}
-          imagePullSecrets: {{ toJson . }}
-          {{- end }}
+          {{- include "nhi-scout.imagePullSecrets" . | indent 10 }}
           serviceAccountName: {{ include "nhi-scout.serviceAccountName" . }}
           {{- with .Values.nodeSelector }}
           nodeSelector: {{ toJson . }}

@@ -6,7 +6,6 @@
       "additionalProperties": false,
       "type": "object",
       "properties": {
-        "version": {"type": "string"},
         "log_level": {
           "$ref": "inventory-log-level.schema.json"
         },
