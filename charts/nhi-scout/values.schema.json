@@ -738,7 +738,6 @@
               "title": "Hostname or endpoint",
               "description": "Example: https://gitguardian.internal/",
               "type": "string",
-              "format": "uri",
               "minLength": 0
             }
           }
