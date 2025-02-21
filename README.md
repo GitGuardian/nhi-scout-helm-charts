@@ -51,13 +51,28 @@ inventory:
       # Run every minute
       schedule: '* * * * *'
 
-# This needs to be created separately, and contain the following keys:
+# This needs to be created separately (read instructions below), and contain the following keys:
 # - `HASHICORP_VAULT_TOKEN` - the hashicorp vault token to use
 # - `GITGUARDIAN_API_KEY` - the GitGuardian token to send results with
 envFrom:
   - secretRef:
       name: gitguardian-nhi-scout-secrets
 ```
+
+To create or update the secrets, you directly use Kubernetes `secrets` API. 
+Create a file name `secrets.yaml` with the following content (replacing the values by your secrets):
+
+```
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gitguardian-nhi-scout-secrets
+stringData:
+    HASHICORP_VAULT_TOKEN: "my_vault_token"
+    GITGUARDIAN_API_KEY: "my_gitguardian_api_key"
+```
+
+To apply the secrets to your cluster/namespace, run the following command: `kubectl apply -f secrets.yaml`
 
 If you want to only fetch the identities without sending them, please see this [example](charts/nhi-scout/examples/fetch_only)
 
