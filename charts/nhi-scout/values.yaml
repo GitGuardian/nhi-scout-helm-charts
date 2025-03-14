@@ -38,18 +38,18 @@ caBundle:
   image:
     registry: ghcr.io
     name: gitguardian/gitguardian-nhi-scout/chainguard-bash
-    tag: 0.14.0
+    tag: null
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
   registry: ghcr.io
   name: gitguardian/gitguardian-nhi-scout/chainguard
   # App version
-  tag: 0.15.0
   # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   # Example:
   # - name: my-secret
   pullSecrets: []
+  tag: null
 
 # This sets the pull policy for images.
 imagePullPolicy: IfNotPresent
