@@ -99,7 +99,7 @@ it will take precedence over registry defined in image.
 {{- define "nhi-scout.image" -}}
 {{- $registry := .Values.image.registry -}}
 {{- $name := .Values.image.name -}}
-{{- $tag := .Values.image.tag | toString -}}
+{{- $tag := (default .Chart.AppVersion .Values.image.tag) | toString -}}
 {{- with .Values.global -}}
   {{- if .imageRegistry -}}
     {{- $registry = .imageRegistry -}}
