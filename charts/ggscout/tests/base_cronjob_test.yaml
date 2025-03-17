@@ -1,0 +1,129 @@
+---
+# Test docs: https://github.com/helm-unittest/helm-unittest/blob/main/DOCUMENT.md
+suite: test base cronjob
+values:
+- ../test_values.yaml
+templates:
+- cronjob_ping.yaml
+set:
+  inventory.config.gitguardian.api_token: "foobar"
+  inventory.config.gitguardian.endpoint: "https://some-url.com"
+tests:
+- it: should work
+  set:
+    image.tag: latest
+  asserts:
+  - isKind:
+      of: CronJob
+  - equal:
+      path: spec.jobTemplate.spec.template.spec.containers[0].image
+      value: ghcr.io/gitguardian/ggscout/chainguard:latest
+
+- it: should set image pull secrets
+  set:
+    global.imagePullSecrets:
+    - name: foobar
+  asserts:
+  - equal:
+      path: spec.jobTemplate.spec.template.spec.imagePullSecrets
+      value:
+      - name: foobar
+
+- it: should set resources
+  set:
+    resources:
+      limits:
+        cpu: 200m
+        memory: 200m
+      requests:
+        cpu: 100m
+        memory: 100m
+  asserts:
+  - equal:
+      path: spec.jobTemplate.spec.template.spec.containers[0].resources.limits
+      value:
+        cpu: 200m
+        memory: 200m
+  - equal:
+      path: spec.jobTemplate.spec.template.spec.containers[0].resources.requests
+      value:
+        cpu: 100m
+        memory: 100m
+
+- it: should set secret mounts
+  asserts:
+  - contains:
+      path: spec.jobTemplate.spec.template.spec.containers[0].volumeMounts
+      content:
+        name: config
+        mountPath: /etc/inventory
+  - contains:
+      path: spec.jobTemplate.spec.template.spec.volumes
+      content:
+        name: config
+        secret:
+          secretName: RELEASE-NAME-ggscout
+  - contains:
+      path: spec.jobTemplate.spec.template.spec.containers[0].env
+      content:
+        name: INVENTORY_CONFIG_PATH
+        value: /etc/inventory/config.yml
+
+- it: should set env and envFrom
+  set:
+    envFrom:
+    - secretRef:
+        name: my-secret
+    env:
+    - name: foo
+      value: bar
+  asserts:
+  - contains:
+      path: spec.jobTemplate.spec.template.spec.containers[0].envFrom
+      content:
+        secretRef:
+          name: my-secret
+  - contains:
+      path: spec.jobTemplate.spec.template.spec.containers[0].env
+      content:
+        name: foo
+        value: bar
+
+- it: should use the right log level
+  set:
+    inventory.config.log_level: info
+  asserts:
+  - contains:
+      path: spec.jobTemplate.spec.template.spec.containers[0].args
+      content: '--verbose=info'
+- it: should set volumes
+  set:
+    volumes:
+    - name: test-volume
+      emptyDir: {}
+  asserts:
+  - contains:
+      path: spec.jobTemplate.spec.template.spec.volumes
+      content:
+        name: test-volume
+        emptyDir: {}
+- it: should set volumeMounts
+  set:
+    volumeMounts:
+    - mountPath: /test
+      name: test-volume
+  asserts:
+  - contains:
+      path: spec.jobTemplate.spec.template.spec.containers[0].volumeMounts
+      content:
+        mountPath: /test
+        name: test-volume
+- it: should set securityContext
+  asserts:
+  - equal:
+      path: spec.jobTemplate.spec.template.spec.securityContext
+      value:
+        runAsUser: 65532
+        runAsGroup: 65532
+        runAsNonRoot: true
+        fsGroup: 65532

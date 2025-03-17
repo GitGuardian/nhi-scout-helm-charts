@@ -1,0 +1,17 @@
+{{- if and .Values.serviceAccount.create .Values.clusterRole.create -}}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "ggscout.fullname" . }}
+  labels:
+    {{- include "ggscout.labels" . | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "ggscout.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: {{ include "ggscout.fullname" . }}
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}

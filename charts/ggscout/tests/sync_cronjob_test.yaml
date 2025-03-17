@@ -1,0 +1,43 @@
+---
+# Test docs: https://github.com/helm-unittest/helm-unittest/blob/main/DOCUMENT.md
+suite: test sync cronjob
+values:
+- ../test_values.yaml
+templates:
+- cronjob_sync.yaml
+set:
+  inventory.jobs.sync.enabled: true
+  inventory.config.gitguardian.api_token: "foobar"
+  inventory.config.gitguardian.endpoint: "https://some-url.com"
+tests:
+- it: should work
+  set:
+    image.tag: latest
+  asserts:
+  - isKind:
+      of: CronJob
+  - matchRegex:
+      path: metadata.name
+      pattern: .*-ggscout-sync$
+
+- it: should use the gitguardian command if set
+  asserts:
+  - equal:
+      path: spec.jobTemplate.spec.template.spec.containers[0].args[0]
+      value: "sync-secrets"
+
+- it: should use the fetch command if no upload is set
+  set:
+    inventory.config.gitguardian: null
+  asserts:
+  - containsDocument:
+      kind: CronJob
+    not: true
+
+- it: should be possible to modify schedule
+  set:
+    inventory.jobs.sync.schedule: 2 * * * *
+  asserts:
+  - equal:
+      path: spec.schedule
+      value: 2 * * * *

@@ -2,10 +2,10 @@
 name = "cz_conventional_commits"
 gpg_sign = true
 major_version_zero = true
-tag_format = "nhi-scout-$version"
+tag_format = "ggscout-$version"
 update_changelog_on_bump = true
 version_files = [
-  "charts/nhi-scout/Chart.yaml:^version: ",
+  "charts/ggscout/Chart.yaml:^version: ",
 ]
 version_scheme = "semver2"
 version = "0.3.1"

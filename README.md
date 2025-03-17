@@ -1,17 +1,17 @@
-# GitGuardian NHI Helm Charts
+# GitGuardian ggscout Helm Charts
 
 ## Installation
 
 Add the repository to Helm with:
 
 ```shell
-helm repo add gg-nhi https://gitguardian.github.io/nhi-scout-helm-charts
+helm repo add ggscout-charts https://gitguardian.github.io/ggscout-helm-charts
 ```
 
 Then install the scout, with a values file (examples below):
 
 ```shell
-helm upgrade scout gg-nhi/nhi-scout --install --values values.yml
+helm upgrade ggscout ggscout-charts --install --values values.yml
 ```
 
 An example values file that fetches from HashiCorp Vault and GitLab CI:
@@ -46,7 +46,7 @@ inventory:
         enabled: true
         # Run every 15 minutes
         schedule: '*/15 * * * *'
-        # If set to `false`, see the fetch-only configuration example in charts/nhi-scout/examples/fetch_only
+        # If set to `false`, see the fetch-only configuration example in charts/ggscout/examples/fetch_only
         send: true
     # Job to be able to sync/write secrets from GitGuardian into you vault
     sync:
@@ -61,7 +61,7 @@ inventory:
 # - `GITGUARDIAN_API_KEY` - the GitGuardian token to send results with
 envFrom:
   - secretRef:
-      name: gitguardian-nhi-scout-secrets
+      name: gitguardian-ggscout-secrets
 ```
 
 To create or update the secrets, you directly use Kubernetes Secrets API.
@@ -71,7 +71,7 @@ Create `secrets.yaml` with the following content (replacing the values with your
 apiVersion: v1
 kind: Secret
 metadata:
-  name: gitguardian-nhi-scout-secrets
+  name: gitguardian-ggscout-secrets
 stringData:
     HASHICORP_VAULT_TOKEN: "my_vault_token"
     GITGUARDIAN_API_KEY: "my_gitguardian_api_key"
@@ -80,9 +80,9 @@ stringData:
 
 To apply the secrets to your cluster/namespace, run the following command: `kubectl apply -f secrets.yaml`
 
-If you want to only fetch the identities without sending them, please see this [example](charts/nhi-scout/examples/fetch_only)
+If you want to only fetch the identities without sending them, please see this [example](charts/ggscout/examples/fetch_only)
 
-Other examples can be found in [charts/nhi-scout/examples](charts/nhi-scout/examples).
+Other examples can be found in [charts/ggscout/examples](charts/ggscout/examples).
 
 ## Development
 
