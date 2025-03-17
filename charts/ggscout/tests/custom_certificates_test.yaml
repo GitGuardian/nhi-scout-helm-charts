@@ -1,0 +1,55 @@
+---
+# Test docs: https://github.com/helm-unittest/helm-unittest/blob/main/DOCUMENT.md
+suite: test custom certificates
+values:
+- ../test_values.yaml
+templates:
+- cronjob_ping.yaml
+set:
+  caBundle.image.tag: latest
+  inventory.config.gitguardian.api_token: "foobar"
+  inventory.config.gitguardian.endpoint: "https://some-url.com"
+tests:
+# Providing CA Certificates with .Values.caBundle.certs
+- it: should work
+  set:
+    caBundle.certs: "myCustomCertificate"
+  asserts:
+  - isKind:
+      of: CronJob
+  - equal:
+      path: spec.jobTemplate.spec.template.spec.initContainers[0].image
+      value: ghcr.io/gitguardian/ggscout/chainguard-bash:latest
+- it: should work
+  set:
+    caBundle.certs: "myCustomCertificate"
+  asserts:
+  - isKind:
+      of: CronJob
+  - equal:
+      path: spec.jobTemplate.spec.template.spec.containers[0].env[1]
+      value:
+        name: SSL_CERT_FILE
+        value: "/etc/ssl/custom-certs/ca-bundle.crt"
+
+# Providing CA Certificates with Existing Secret
+- it: should work
+  set:
+    caBundle.existingSecret: "myExistingSecret"
+  asserts:
+  - isKind:
+      of: CronJob
+  - equal:
+      path: spec.jobTemplate.spec.template.spec.initContainers[0].image
+      value: ghcr.io/gitguardian/ggscout/chainguard-bash:latest
+- it: should work
+  set:
+    caBundle.existingSecret: "myExistingSecret"
+  asserts:
+  - isKind:
+      of: CronJob
+  - equal:
+      path: spec.jobTemplate.spec.template.spec.containers[0].env[1]
+      value:
+        name: SSL_CERT_FILE
+        value: "/etc/ssl/custom-certs/ca-bundle.crt"

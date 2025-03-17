@@ -1,6 +1,6 @@
-## nhi-scout-0.3.1 (2025-03-14)
+## ggscout-0.3.1 (2025-03-14)
 
-## nhi-scout-0.3.0 (2025-03-12)
+## ggscout-0.3.0 (2025-03-12)
 
 ### Feat
 
@@ -11,7 +11,7 @@
 - doc generation
 - **chart**: remove uri constraint on endpoint to allow variables
 
-## nhi-scout-0.2.1 (2025-02-18)
+## ggscout-0.2.1 (2025-02-18)
 
 ### Feat
 
@@ -22,7 +22,7 @@
 
 - provides generated Scout documentation as GitHub pages
 
-## nhi-scout-0.2.0 (2025-02-10)
+## ggscout-0.2.0 (2025-02-10)
 
 ### Feat
 
@@ -30,7 +30,7 @@
 - **cr**: use Release.Namespace and use proper helper for saName
 - **image**: rework image path and imagepullsecrets to work with global values from GIM
 - **psp**: add proper securityContext to jobs on enforced env. Default conf works with chainguard
-- **nhi-explorer**: review doc and helm tests
+- **ggscout**: review doc and helm tests
 
 ### Fix
 
